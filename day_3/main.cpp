@@ -22,6 +22,7 @@ const std::vector<std::string> keywords_1 = {"mul"};
 const std::vector<std::string> keywords_2 = {"mul", "do()", "don't()"};
 
 int day_3_1(const std::string &input);
+
 int day_3_2(const std::string &input);
 
 int main(int argc, char **argv) {
@@ -31,16 +32,16 @@ int main(int argc, char **argv) {
   }
 
   std::cout << "======|\nInput |\n======V\n" << argv[1] << "\n\n";
-  /*
-    auto result_1 = day_3_1(argv[1]);
-    std::cout << "Result 1: " << result_1 << std::endl;
-  */
-  auto result_2 = day_3_2(argv[1]);
+
+  const auto result_1 = day_3_1(argv[1]);
+  std::cout << "Result 1: " << result_1 << std::endl;
+
+  const auto result_2 = day_3_2(argv[1]);
   std::cout << "Result 2: " << result_2 << std::endl;
 }
 
 bool starts_with(const std::string &target, const std::string &test) {
-  return target.find(test, 0) != std::string::npos;
+  return target.find(test, 0) == 0;
 }
 
 ParseResult get_mul_call_operands(const std::string &s) {
@@ -51,7 +52,7 @@ ParseResult get_mul_call_operands(const std::string &s) {
   auto end_paren_found = false;
   auto right_paren_index = 0;
 
-  for (auto i = 8; i >= 4; --i) {
+  for (auto i = s.size() - 1; i >= 4; --i) {
     if (s[i] == ')' && std::isdigit(s[i - 1])) {
       end_paren_found = true;
       right_paren_index = i;
@@ -102,9 +103,11 @@ ParseResult get_mul_call_operands(const std::string &s) {
     }
   }
 
-  return {true,
-          right_paren_index,
-          {std::atoi(op_1.c_str()), std::atoi(op_2.c_str())}};
+  return {
+    true,
+    right_paren_index,
+    {std::atoi(op_1.c_str()), std::atoi(op_2.c_str())}
+  };
 }
 
 token_list parse_tokens(const std::string &s,
@@ -113,36 +116,30 @@ token_list parse_tokens(const std::string &s,
   auto should_do = true;
 
   for (auto i = 0; i < s.size(); ++i) {
-    for (std::string keyword : keywords) {
-      auto kw_size = keyword.size();
-      if (starts_with(keyword, std::string{s[i]})) {
-        std::cout << i << ":" << s[i] << std::endl;
-
+    for (const std::string &keyword: keywords) {
+      const auto kw_size = keyword.size();
+      const auto c = s[i];
+      if (starts_with(keyword, std::string{c})) {
         if (i + kw_size < s.size() &&
             starts_with(keyword, s.substr(i, kw_size))) {
           if (keyword == "mul") {
-            std::cout << "FOUND MUL\n";
-            i = i + kw_size;
-            auto result = get_mul_call_operands(s.substr(i, 9));
+            i += kw_size;
+            auto sub_str = i + 9 > s.size() ? s.substr(i) : s.substr(i, 9);
+            auto result = get_mul_call_operands(sub_str);
             if (result.success) {
               if (should_do) {
                 list.push_back(result.operands);
               }
               i += result.end_location - 1;
               break;
-            } else {
-              break;
             }
           } else if (keyword == "do()") {
-            std::cout << "FOUND DO()\n";
             should_do = true;
-            i += i + kw_size - 1;
+            i += kw_size - 1;
             break;
-
           } else if (keyword == "don't()") {
-            std::cout << "FOUND DON'T()\n";
             should_do = false;
-            i += i + kw_size - 1;
+            i += kw_size - 1;
             break;
           }
         }
@@ -156,7 +153,7 @@ token_list parse_tokens(const std::string &s,
 int day_3_1(const std::string &input) {
   auto tokens = parse_tokens(input);
   auto sum = 0;
-  for (auto t : tokens) {
+  for (auto t: tokens) {
     sum += t.a * t.b;
   }
   return sum;
@@ -165,7 +162,7 @@ int day_3_1(const std::string &input) {
 int day_3_2(const std::string &input) {
   auto tokens = parse_tokens(input, keywords_2);
   auto sum = 0;
-  for (auto t : tokens) {
+  for (auto t: tokens) {
     sum += t.a * t.b;
   }
   return sum;
