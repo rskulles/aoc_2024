@@ -1,11 +1,14 @@
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
-set(AOC_DAY X)
+
 # CHANGE 'X' to the number of the day
+set(AOC_DAY X)
+
 project(AOC_2024_${AOC_DAY})
+
 set(APP_NAME day_${AOC_DAY})
-# CHANGE 'x' to the number of the day
+
 add_executable(${APP_NAME} main.cpp)
 
 add_custom_command(
