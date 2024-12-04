@@ -1,5 +1,7 @@
-// https://adventofcode.com/2024/day/1
-
+/*
+ *AoC Link: https://adventofcode.com/2024/day/1
+ *To execute: ./day_1 $(cat input.txt)
+*/
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -11,8 +13,10 @@ unsigned int day_1_1(const std::vector<int> &l, const std::vector<int> &r);
 unsigned int day_1_2(const std::vector<int> &l, const std::vector<int> &r);
 
 int main(const int argc, char **argv) {
+
   if (argc == 1) {
     std::cerr << "Not enough arguments\n";
+    return 1;
   }
 
   std::vector<int> left;
@@ -30,7 +34,6 @@ int main(const int argc, char **argv) {
   std::cout << "Distance Result: " << dist_result << std::endl;
 
   const auto sim_result = day_1_2(left, right);
-
   std::cout << "Similarity Result: " << sim_result << std::endl;
 }
 
@@ -43,11 +46,13 @@ unsigned int day_1_1(const std::vector<int> &l, const std::vector<int> &r) {
   std::sort(right_clone.begin(), right_clone.end());
 
   diffs.reserve(left_clone.size());
+
   for (auto i = 0; i < left_clone.size(); ++i) {
     diffs.push_back(std::abs((right_clone[i] - left_clone[i])));
   }
 
   unsigned int sum = 0;
+
   for (const auto i: diffs) {
     sum += i;
   }
