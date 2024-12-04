@@ -1,3 +1,7 @@
+/*
+ * AoC Link: https://adventofcode.com/2024/day/3
+ * To Execute ./day_3 "$(cat input.txt)"
+ */
 #include <cctype>
 #include <iostream>
 #include <string>
@@ -106,7 +110,7 @@ ParseResult get_mul_call_operands(const std::string &s) {
   return {
     true,
     right_paren_index,
-    {std::atoi(op_1.c_str()), std::atoi(op_2.c_str())}
+    {std::strtol(op_1.c_str(),nullptr,10), std::strtol(op_2.c_str(),nullptr,10)}
   };
 }
 
@@ -117,9 +121,8 @@ token_list parse_tokens(const std::string &s,
 
   for (auto i = 0; i < s.size(); ++i) {
     for (const std::string &keyword: keywords) {
-      const auto kw_size = keyword.size();
-      const auto c = s[i];
-      if (starts_with(keyword, std::string{c})) {
+      const auto kw_size = static_cast<int>(keyword.size());
+      if (const auto c = s[i]; starts_with(keyword, std::string{c})) {
         if (i + kw_size < s.size() &&
             starts_with(keyword, s.substr(i, kw_size))) {
           if (keyword == "mul") {

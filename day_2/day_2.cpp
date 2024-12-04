@@ -1,24 +1,31 @@
+/*
+ *AoC Link: https://adventofcode.com/2024/day/2
+ *To Execute: cat input.txt | ./day_2
+ */
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include <vector>
 
-unsigned int day_2_1(const std::vector<std::vector<int>> &r);
-unsigned int day_2_2(const std::vector<std::vector<int>> &r);
+unsigned int day_2_1(const std::vector<std::vector<int> > &r);
+
+unsigned int day_2_2(const std::vector<std::vector<int> > &r);
 
 int direction(int a, int b);
+
 bool is_safe_difference(int a, int b);
+
 bool can_be_made_safe(const std::vector<int> &r);
 
 std::vector<int> unsafe_reports(const std::vector<int> &r);
 
-int main(int argc, char **argv) {
-
+int main(const int argc, char **argv) {
   if (argc > 1) {
     std::cerr << "too many arguments\n";
   }
 
-  std::vector<std::vector<int>> reports;
+  std::vector<std::vector<int> > reports;
   auto delimiter = ' ';
 
   for (std::string line; std::getline(std::cin, line);) {
@@ -73,9 +80,9 @@ int direction(int a, int b) {
   return -1;
 }
 
-unsigned int day_2_1(const std::vector<std::vector<int>> &reports) {
+unsigned int day_2_1(const std::vector<std::vector<int> > &reports) {
   unsigned int safe_count = 0;
-  for (auto report : reports) {
+  for (auto report: reports) {
     auto d = direction(report[0], report[1]);
     if (d == 0) {
       continue;
@@ -100,7 +107,6 @@ unsigned int day_2_1(const std::vector<std::vector<int>> &reports) {
 }
 
 std::vector<int> unsafe_reports(const std::vector<int> &r) {
-
   auto d = 0;
   std::vector<int> bad_levels;
 
@@ -131,7 +137,6 @@ std::vector<int> unsafe_reports(const std::vector<int> &r) {
 }
 
 bool can_be_made_safe(const std::vector<int> &r) {
-
   for (auto i = 0; i < r.size(); ++i) {
     std::vector<int> new_report;
     for (auto j = 0; j < r.size(); j++) {
@@ -148,9 +153,9 @@ bool can_be_made_safe(const std::vector<int> &r) {
   return false;
 }
 
-unsigned int day_2_2(const std::vector<std::vector<int>> &reports) {
+unsigned int day_2_2(const std::vector<std::vector<int> > &reports) {
   unsigned int safe_count = 0;
-  for (auto report : reports) {
+  for (auto report: reports) {
     auto bad_levels = unsafe_reports(report);
     auto is_safe = bad_levels.empty();
     if (is_safe) {
