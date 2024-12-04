@@ -1,3 +1,5 @@
+// https://adventofcode.com/2024/day/1
+
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -5,10 +7,10 @@
 #include <vector>
 
 unsigned int day_1_1(const std::vector<int> &l, const std::vector<int> &r);
+
 unsigned int day_1_2(const std::vector<int> &l, const std::vector<int> &r);
 
-int main(int argc, char **argv) {
-
+int main(const int argc, char **argv) {
   if (argc == 1) {
     std::cerr << "Not enough arguments\n";
   }
@@ -18,34 +20,35 @@ int main(int argc, char **argv) {
 
   for (auto i = 1; i < argc; ++i) {
     if (i % 2 == 0) {
-      right.push_back(atoi(argv[i]));
+      right.push_back(std::strtol(argv[i], nullptr, 10));
     } else {
-      left.push_back(atoi(argv[i]));
+      left.push_back(std::strtol(argv[i], nullptr, 10));
     }
   }
 
-  auto dist_result = day_1_1(left, right);
+  const auto dist_result = day_1_1(left, right);
   std::cout << "Distance Result: " << dist_result << std::endl;
-  auto sim_result = day_1_2(left, right);
+
+  const auto sim_result = day_1_2(left, right);
 
   std::cout << "Similarity Result: " << sim_result << std::endl;
 }
 
 unsigned int day_1_1(const std::vector<int> &l, const std::vector<int> &r) {
-
-  auto lclone = std::vector(l);
-  auto rclone = std::vector(r);
+  auto left_clone = std::vector(l);
+  auto right_clone = std::vector(r);
   std::vector<int> diffs;
 
-  std::sort(lclone.begin(), lclone.end());
-  std::sort(rclone.begin(), rclone.end());
+  std::sort(left_clone.begin(), left_clone.end());
+  std::sort(right_clone.begin(), right_clone.end());
 
-  for (auto i = 0; i < lclone.size(); ++i) {
-    diffs.push_back(std::abs((rclone[i] - lclone[i])));
+  diffs.reserve(left_clone.size());
+  for (auto i = 0; i < left_clone.size(); ++i) {
+    diffs.push_back(std::abs((right_clone[i] - left_clone[i])));
   }
 
   unsigned int sum = 0;
-  for (auto i : diffs) {
+  for (const auto i: diffs) {
     sum += i;
   }
 
@@ -53,21 +56,17 @@ unsigned int day_1_1(const std::vector<int> &l, const std::vector<int> &r) {
 }
 
 unsigned int day_1_2(const std::vector<int> &l, const std::vector<int> &r) {
-
   std::map<int, unsigned int> similarity_map;
   std::vector<unsigned int> similarity_scores;
 
-  for (auto i = 0; i < l.size(); ++i) {
-    auto left_id = l[i];
-    auto hashed_score = similarity_map.find(left_id);
-
-    if (hashed_score != similarity_map.end()) {
+  for (int left_id: l) {
+    if (auto hashed_score = similarity_map.find(left_id); hashed_score != similarity_map.end()) {
       similarity_scores.push_back(hashed_score->second);
       continue;
     }
 
     auto count = 0;
-    for (auto right_id : r) {
+    for (const auto right_id: r) {
       if (left_id == right_id) {
         count++;
       }
@@ -79,7 +78,8 @@ unsigned int day_1_2(const std::vector<int> &l, const std::vector<int> &r) {
   }
 
   unsigned int sum = 0;
-  for (auto score : similarity_scores) {
+
+  for (const auto score: similarity_scores) {
     sum += score;
   }
 
