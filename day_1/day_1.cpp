@@ -13,7 +13,6 @@ unsigned int day_1_1(const std::vector<int> &l, const std::vector<int> &r);
 unsigned int day_1_2(const std::vector<int> &l, const std::vector<int> &r);
 
 int main(const int argc, char **argv) {
-
   if (argc == 1) {
     std::cerr << "Not enough arguments\n";
     return 1;
