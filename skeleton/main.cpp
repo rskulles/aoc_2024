@@ -1,3 +1,3 @@
 #include <iostream>
 
-int main() { std::cout << "Hello, World!\n"; }
+int main(const int argc, const char *  argv[]) { std::cout << "Hello, World!\n"; }
