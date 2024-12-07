@@ -1,6 +1,6 @@
 #include <iostream>
 #include<fstream>
-
+#include<string>
 int main(const int argc, const char *  argv[]) {
     std::ifstream in_file("input.txt");
     std::string line;
