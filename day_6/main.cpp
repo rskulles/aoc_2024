@@ -4,13 +4,15 @@
 #include<chrono>
 #include<thread>
 #include<vector>
-#define DRAW 1
+//#define DRAW_1 1
+//define DRAW_2 1
 //Terminal codes that help with drawing
 #define START_POS "\033[1;1H"
 #define CLEAR_SCREEN "\x1B[2J\x1B[H"
 #define SLEEP_TIME_MS 50
 
 typedef std::vector<std::string> board_t;
+
 enum class Direction { up, down, left, right, none };
 
 struct Position {
@@ -18,85 +20,35 @@ struct Position {
     int y;
 };
 
-typedef std::vector<Position> positions_t;
+typedef std::vector<std::vector<Position> > positions_t;
 
-struct GuardState {
+struct VisitedObstacle {
     Position position;
     Direction direction;
 };
 
-struct ObstacleLoopPositions {
-    Position positions[4];
-};
-
-enum class OffsetType {
-    numeric,
-    any
-};
-
-struct Offset {
-    OffsetType type;
-    int value;
-};
-
-struct PositionOffset{
-    Offset x;
-    Offset y;
-};
-
-
-std::string get_obstacle_loop_positions_hash(const ObstacleLoopPositions &obstacle_loop_positions) {
-    std::string hash;
-    for (auto position: obstacle_loop_positions.positions) {
-        hash += std::to_string(position.x) + "|" + std::to_string(position.y) + "|";
-    }
-    return hash;
-}
-
-bool are_obstacle_loop_positions_equal(const ObstacleLoopPositions &a, const ObstacleLoopPositions &b) {
-    return get_obstacle_loop_positions_hash(a) == get_obstacle_loop_positions_hash(b);
-}
-
-void sort_obstacle_positions(ObstacleLoopPositions &obstacle_loop_positions) {
-    auto sorted = false;
-    while (!sorted) {
-        auto swapped = false;
-        for (int i = 0; i < 3; ++i) {
-            auto position = obstacle_loop_positions.positions[i];
-            auto j=i+1;
-            auto next_position = obstacle_loop_positions.positions[j];
-
-            if ((position.y == next_position.y && position.x > next_position.x) || position.y > next_position.y) {
-                swapped = true;
-                obstacle_loop_positions.positions[j].x = position.x;
-                obstacle_loop_positions.positions[j].y = position.y;
-                obstacle_loop_positions.positions[j - 1].x = next_position.x;
-                obstacle_loop_positions.positions[j - 1].y = next_position.y;
-            }
-        }
-        sorted = !swapped;
-    }
-}
-
-bool ObstacleLoopPositionsLoopable(const ObstacleLoopPositions &obstacle_loop_positions) {
-    auto bad_position_count = 0;
-    for (const auto &position: obstacle_loop_positions.positions) {
-        if (position.x == -1 && position.y == -1) {
-            ++bad_position_count;
+bool was_visited(const VisitedObstacle new_obstacle, const std::vector<VisitedObstacle> &obstacles) {
+    for (const auto&[position, direction] : obstacles) {
+        if (new_obstacle.position.x == position.x &&
+            new_obstacle.position.y == position.y &&
+            new_obstacle.direction == direction) {
+            return true;
         }
     }
-    return bad_position_count == 1;
+    return false;
 }
+struct GuardState {
+    Position position;
+    Direction direction;
+    char tile_on = '\0';
+    std::vector<VisitedObstacle> visited_obstacles;
+};
 
-int get_bad_position_index(const ObstacleLoopPositions &obstacle_loop_positions) {
-    for (int i = 0; i < 4; ++i) {
-        const auto pos = obstacle_loop_positions.positions[i];
-        if (pos.x == -1 && pos.y == -1) {
-            return i;
-        }
-    }
-    return -1;
-}
+
+enum class LoopDirections {
+    RightUp,
+    RightDown,
+};
 
 void rotate_guard(GuardState &state) {
     switch (state.direction) {
@@ -154,6 +106,26 @@ bool guard_on_board(const GuardState &state, const board_t &board) {
     return true;
 }
 
+char guard_trail_char(const GuardState &state) {
+    char c = '\0';
+    if (state.tile_on == '+') {
+        return '+';
+    }
+    switch (state.direction) {
+        case Direction::up:
+        case Direction::down:
+            c = '|';
+            break;
+        case Direction::left:
+        case Direction::right:
+            c = '-';
+            break;
+        case Direction::none:
+            break;
+    }
+    return c;
+}
+
 char guard_char(const GuardState &state) {
     switch (state.direction) {
         case Direction::up:
@@ -192,10 +164,11 @@ int main(const int argc, const char *argv[]) {
     board_t board;
     int row = 0;
     GuardState state{{0, 0}, Direction::none};
-    auto up = '^';
-    auto down = 'v';
-    auto right = '>';
-    auto left = '<';
+
+    const auto up = '^';
+    const auto down = 'v';
+    const auto right = '>';
+    const auto left = '<';
 
     while (std::getline(in_file, line)) {
         auto found_up = line.find(up);
@@ -226,26 +199,19 @@ int main(const int argc, const char *argv[]) {
         ++row;
     }
 
-    ObstacleLoopPositions obstacle_loop_positions = {};
-    obstacle_loop_positions.positions[0] = {12, 30};
-    obstacle_loop_positions.positions[1] = {30, 1};
-    obstacle_loop_positions.positions[2] = {20, 1};
-    obstacle_loop_positions.positions[3] = {10, 1};
-    std::cout << get_obstacle_loop_positions_hash(obstacle_loop_positions) << std::endl;
-    sort_obstacle_positions(obstacle_loop_positions);
-    std::cout << get_obstacle_loop_positions_hash(obstacle_loop_positions) << std::endl;
     std::cout << CLEAR_SCREEN << std::flush;
-    const auto result_1 = day_6_1(board, state);
+    //    const auto result_1 = day_6_1(board, state);
     const auto result_2 = day_6_2(board, state);
 
-    std::cout << "RESULT 1: " << result_1 << std::endl;
+    //    std::cout << "RESULT 1: " << result_1 << std::endl;
     std::cout << "RESULT 2: " << result_2 << std::endl;
+    return 0;
 }
 
 int day_6_1(const board_t &board, const GuardState &state) {
     board_t board_copy(board.begin(), board.end());
     GuardState state_copy{{state.position.x, state.position.y}, state.direction};
-#if DRAW
+#if DRAW_1
     print_board(board_copy);
 #endif
     while (guard_on_board(state_copy, board_copy)) {
@@ -262,7 +228,7 @@ int day_6_1(const board_t &board, const GuardState &state) {
                 board_copy[next_move.y][next_move.x] = guard_char(state_copy);
             }
         }
-#if DRAW
+#if DRAW_1
         print_board(board_copy);
         sleep_ms(SLEEP_TIME_MS);
 #endif
@@ -278,15 +244,70 @@ int day_6_1(const board_t &board, const GuardState &state) {
     return sum;
 }
 
-int day_6_2(const board_t &board, const GuardState &state) {
-    auto sum = 0;
-    positions_t obstacle_positions;
-    for (int i = 0; i < board.size(); ++i) {
-        for (int j = 0; j < board[i].size(); ++j) {
-            if (board[i][j] == '#') {
-                obstacle_positions.push_back({j, i});
-            }
+bool escape_board(GuardState &state, board_t &board) {
 
+#if DRAW_2
+    print_board(board);
+#endif
+
+    while (guard_on_board(state, board)) {
+        const auto current_spot = state.position;
+        const auto next_move = next_guard_move(state);
+        Position next_position = {next_move.x, next_move.y};
+        GuardState test_state = { next_position};
+
+        if (guard_on_board(test_state, board) && board[next_move.y][next_move.x] == '#') {
+            VisitedObstacle visited = {{next_position.x, next_position.y}, state.direction};
+            if (state.visited_obstacles.empty() ||
+                !was_visited(visited,state.visited_obstacles)) {
+                state.visited_obstacles.push_back(visited);
+            }else {
+                return false;
+            }
+            rotate_guard(state);
+           state.tile_on='+';
+            board[state.position.y][state.position.x] = guard_char(state);
+        } else {
+            auto trail_char = guard_trail_char(state);
+            if (state.tile_on =='\0' || state.tile_on=='.' || state.tile_on==trail_char) {
+                board[current_spot.y][current_spot.x] = trail_char;
+            }else {
+                board[current_spot.y][current_spot.x] = '+';
+            }
+            move_guard(state, next_move);
+            if (guard_on_board(state, board)) {
+                state.tile_on = board[next_move.y][next_move.x];
+                board[next_move.y][next_move.x] = guard_char(state);
+            }
+        }
+#if DRAW_2
+        print_board(board);
+        sleep_ms(SLEEP_TIME_MS);
+#endif
+    }
+    return true;
+}
+
+int day_6_2(const board_t &board, const GuardState &state) {
+    board_t board_copy(board.begin(), board.end());
+    GuardState state_copy{{state.position.x, state.position.y}, state.direction};
+    auto escaped = escape_board(state_copy, board_copy);
+    if (!escaped) {
+        return 0;
+    }
+    auto sum =0;
+
+    for (int row =0;row<board.size();++row) {
+        for (int col=0;col<board[row].size();++col) {
+            if (board_copy[row][col] != '#' &&
+                !(state.position.x == col && state.position.y == row)) {
+                auto new_board = board_t(board.begin(), board.end());
+                new_board[row][col] = '#';
+                auto new_state = GuardState{{state.position.x, state.position.y}, state.direction};
+                if (!escape_board(new_state, new_board)) {
+                   ++sum;
+                }
+            }
         }
     }
 
