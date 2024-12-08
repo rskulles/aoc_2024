@@ -5,10 +5,10 @@
 #include<thread>
 #include<vector>
 //#define DRAW_1 1
-//define DRAW_2 1
+#define DRAW_2 1
 //Terminal codes that help with drawing
 #define START_POS "\033[1;1H"
-#define CLEAR_SCREEN "\x1B[2J\x1B[H"
+#define CLEAR_SCREEN "\033[2J\033[H"
 #define SLEEP_TIME_MS 50
 
 typedef std::vector<std::string> board_t;
@@ -291,8 +291,7 @@ bool escape_board(GuardState &state, board_t &board) {
 int day_6_2(const board_t &board, const GuardState &state) {
     board_t board_copy(board.begin(), board.end());
     GuardState state_copy{{state.position.x, state.position.y}, state.direction};
-    auto escaped = escape_board(state_copy, board_copy);
-    if (!escaped) {
+    if (auto escaped = escape_board(state_copy, board_copy); !escaped) {
         return 0;
     }
     auto sum =0;
@@ -300,6 +299,7 @@ int day_6_2(const board_t &board, const GuardState &state) {
     for (int row =0;row<board.size();++row) {
         for (int col=0;col<board[row].size();++col) {
             if (board_copy[row][col] != '#' &&
+                board_copy[row][col] !='.' &&
                 !(state.position.x == col && state.position.y == row)) {
                 auto new_board = board_t(board.begin(), board.end());
                 new_board[row][col] = '#';
