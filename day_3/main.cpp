@@ -2,14 +2,16 @@
  * AoC Link: https://adventofcode.com/2024/day/3
  * To Execute ./day_3 "$(cat input.txt)"
  */
+
 #include <cctype>
 #include <iostream>
 #include <string>
 #include <vector>
 
+
 struct Operands {
-  int a{0};
-  int b{0};
+  long a{0};
+  long b{0};
 };
 
 struct ParseResult {

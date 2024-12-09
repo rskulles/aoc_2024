@@ -12,5 +12,5 @@ add_executable(${APP_NAME} main.cpp)
 add_custom_command(
   TARGET ${APP_NAME}
   POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/input.txt
+  COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/test_input.txt
           ${CMAKE_CURRENT_BINARY_DIR}/input.txt)

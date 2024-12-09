@@ -7,8 +7,8 @@ typedef std::vector<int> update_t;
 typedef std::vector<std::vector<int> > updates_t;
 
 struct Rule {
-    int number;
-    int comes_before;
+    long number;
+    long comes_before;
 };
 
 std::string rule_to_string(const Rule &rule) {
