@@ -9,7 +9,6 @@ project(AOC_2024_${AOC_DAY})
 set(APP_NAME day_${AOC_DAY})
 
 add_executable(${APP_NAME} main.cpp)
-
 add_custom_command(
   TARGET ${APP_NAME}
   POST_BUILD

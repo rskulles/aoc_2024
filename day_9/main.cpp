@@ -3,6 +3,7 @@
 #include<string>
 #include<vector>
 #define CHANGE_TO_REBUILD 1
+
 int main(const int argc, const char *  argv[]) {
     std::ifstream in_file("input.txt");
     std::string line;
