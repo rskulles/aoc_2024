@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_STANDARD 17)
 
-# CHANGE 'X' to the number of the day
 set(AOC_DAY 10)
 
 project(AOC_2024_${AOC_DAY})
