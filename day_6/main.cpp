@@ -5,11 +5,11 @@
 #include<thread>
 #include<vector>
 //#define DRAW_1 1
-#define DRAW_2 1
+//#define DRAW_2 2
 //Terminal codes that help with drawing
 #define START_POS "\033[1;1H"
 #define CLEAR_SCREEN "\033[2J\033[H"
-#define SLEEP_TIME_MS 50
+#define SLEEP_TIME_MS 10
 
 typedef std::vector<std::string> board_t;
 
