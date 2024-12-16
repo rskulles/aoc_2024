@@ -3,6 +3,7 @@
 #include<string>
 #include<vector>
 
+
 struct CalibrationEquation {
     long long result = 0;
     std::vector<long long> inputs = {};

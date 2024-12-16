@@ -76,9 +76,6 @@ int main(const int argc, const char *argv[]) {
     while (std::getline(in_file, line)) {
         lines.push_back(line);
     }
-    Vector2 button_a;
-    Vector2 button_b;
-    Position prize_location;
 
     Puzzle puzzle;
     const std::string &x_search = "X+";
@@ -86,6 +83,8 @@ int main(const int argc, const char *argv[]) {
     const std::string &x_search_alt = "X=";
     const std::string &y_search_alt = "Y=";
     for (const auto &line: lines) {
+        Vector2 button_b;
+        Vector2 button_a;
         if (const auto a_line = line.find("Button A:"); a_line != std::string::npos) {
             const auto x_pos = line.find(x_search, a_line) + x_search.size();
             const auto end_x_pos = line.find(",", x_pos);
@@ -103,6 +102,7 @@ int main(const int argc, const char *argv[]) {
             button_b.x = std::stoi(x_string);
             button_b.y = std::stoi(y_string);
         } else if (const auto prize_line = line.find("Prize:"); prize_line != std::string::npos) {
+            Position prize_location;
             const auto x_pos = line.find(x_search_alt, prize_line) + x_search_alt.size();
             const auto end_x_pos = line.find(",", x_pos);
             const auto x_string = line.substr(x_pos, end_x_pos - x_pos);
