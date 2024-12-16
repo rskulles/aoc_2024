@@ -21,20 +21,22 @@ struct Vector2 {
 
 class Robot {
 public:
-    explicit Robot(const Vector2& position, const Vector2& velocity):_position(position), _velocity(velocity) {}
-    explicit Robot(const std::string& str): _position({0,0}), _velocity({0,0}) {
+    explicit Robot(const Vector2 &position, const Vector2 &velocity): _position(position), _velocity(velocity) {
+    }
+
+    explicit Robot(const std::string &str): _position({0, 0}), _velocity({0, 0}) {
         auto position_velocity_split = str.find(" ");
-        if (position_velocity_split== std::string::npos) {
+        if (position_velocity_split == std::string::npos) {
             throw std::invalid_argument("Not a valid definition");
         }
-        const auto pos = str.substr(2, position_velocity_split-1);
-        auto split =pos.find(",");
+        const auto pos = str.substr(2, position_velocity_split - 1);
+        auto split = pos.find(",");
         _position.x = std::stoi(pos.substr(0, split));
-        _position.y = std::stoi(pos.substr(split+1));
-        auto vel= str.substr(position_velocity_split+3);
-        split =vel.find(",");
+        _position.y = std::stoi(pos.substr(split + 1));
+        auto vel = str.substr(position_velocity_split + 3);
+        split = vel.find(",");
         _velocity.x = std::stoi(vel.substr(0, split));
-        _velocity.y = std::stoi(vel.substr(split+1));
+        _velocity.y = std::stoi(vel.substr(split + 1));
     }
 
     [[nodiscard]] Vector2 get_position() const {
@@ -46,25 +48,26 @@ public:
         _position.y += _velocity.y * dt;
     }
 
-    void teleport_to(const Vector2& vector2) {
+    void teleport_to(const Vector2 &vector2) {
         _position = vector2;
     }
 
 private:
-    Robot()=default;
+    Robot() = default;
+
     Vector2 _position;
     Vector2 _velocity;
 };
 
 class Puzzle {
 public:
-    std::vector<std::vector<int>> get_puzzle_state()const {
-        std::vector<std::vector<int>> puzzle;
+    std::vector<std::vector<int> > get_puzzle_state() const {
+        std::vector<std::vector<int> > puzzle;
         puzzle.resize(_height);
         for (int row = 0; row < _height; ++row) {
             puzzle[row].resize(_width);
             for (int col = 0; col < _width; ++col) {
-                puzzle[row][col]=0;
+                puzzle[row][col] = 0;
             }
         }
 
@@ -82,13 +85,13 @@ public:
             for (auto col = 0; col < PUZZLE_WIDTH; col++) {
                 auto key = std::to_string(col) + ":" + std::to_string(row);
                 if (auto kvp = robots.find(key); kvp != robots.end()) {
-                    puzzle[row][col]=kvp->second.size();
+                    puzzle[row][col] = kvp->second.size();
                 }
-
             }
         }
         return puzzle;
     }
+
     friend std::ostream &operator<<(std::ostream &os, const Puzzle &obj) {
         std::map<std::string, std::vector<Robot> > robots;
         for (const auto &r: obj._robots) {
@@ -119,7 +122,7 @@ public:
     }
 
 public:
-    explicit Puzzle(const int width, const int height):_width(width),_height(height) {
+    explicit Puzzle(const int width, const int height): _width(width), _height(height) {
     }
 
     void add_robot(Robot robot) {
@@ -130,22 +133,21 @@ public:
         for (auto &robot: _robots) {
             robot.update(dt);
             auto [x, y] = robot.get_position();
-            const auto off_x = x >= _width|| x<0;
-            const auto off_y = y >= _height|| y<0;
+            const auto off_x = x >= _width || x < 0;
+            const auto off_y = y >= _height || y < 0;
             if (off_x || off_y) {
-                Vector2 new_position {x,y};
+                Vector2 new_position{x, y};
                 if (off_x) {
-                    if (x>=_width) {
-                        new_position.x = x- _width;
-                    }else {
+                    if (x >= _width) {
+                        new_position.x = x - _width;
+                    } else {
                         new_position.x = x + _width;
                     }
                 }
                 if (off_y) {
-
-                    if (y>=_height) {
-                        new_position.y = y- _height;
-                    }else {
+                    if (y >= _height) {
+                        new_position.y = y - _height;
+                    } else {
                         new_position.y = y + _height;
                     }
                 }
@@ -155,26 +157,26 @@ public:
     }
 
     std::vector<int> get_robots_in_quadrants() {
-        std::vector<int> robots_in_quadrants={0,0,0,0};
+        std::vector<int> robots_in_quadrants = {0, 0, 0, 0};
         for (const auto &robot: _robots) {
             auto [x, y] = robot.get_position();
-            if (x==PUZZLE_MID_WIDTH || y==PUZZLE_MID_HEIGHT) {
+            if (x == PUZZLE_MID_WIDTH || y == PUZZLE_MID_HEIGHT) {
                 continue;
             }
 
-            if (x<PUZZLE_MID_WIDTH && y<PUZZLE_MID_HEIGHT){
+            if (x < PUZZLE_MID_WIDTH && y < PUZZLE_MID_HEIGHT) {
                 robots_in_quadrants[0]++;
             }
 
-            if (x>PUZZLE_MID_WIDTH && y<PUZZLE_MID_HEIGHT){
+            if (x > PUZZLE_MID_WIDTH && y < PUZZLE_MID_HEIGHT) {
                 robots_in_quadrants[1]++;
             }
 
-            if (x<PUZZLE_MID_WIDTH && y>PUZZLE_MID_HEIGHT){
+            if (x < PUZZLE_MID_WIDTH && y > PUZZLE_MID_HEIGHT) {
                 robots_in_quadrants[2]++;
             }
 
-            if (x>PUZZLE_MID_WIDTH && y>PUZZLE_MID_HEIGHT){
+            if (x > PUZZLE_MID_WIDTH && y > PUZZLE_MID_HEIGHT) {
                 robots_in_quadrants[3]++;
             }
         }
@@ -207,8 +209,8 @@ int main(const int argc, const char *argv[]) {
     }
 
     //puzzle.add_robot(Robot({0,0},{0,-1}));
-    std::cout<<CLEAR_SCREEN;
-    std::cout<<puzzle;
+    std::cout << CLEAR_SCREEN;
+    std::cout << puzzle;
     const auto result_1 = day_14_1(puzzle);
     const auto result_2 = day_14_2(puzzle);
     std::cout << "Result 1: " << result_1 << "\n";
@@ -216,12 +218,12 @@ int main(const int argc, const char *argv[]) {
 }
 
 unsigned long day_14_1(Puzzle puzzle) {
-    for (auto i =0; i < 100; ++i) {
+    for (auto i = 0; i < 100; ++i) {
         puzzle.update(1);
     }
     auto quadrants = puzzle.get_robots_in_quadrants();
     auto factor = quadrants[0];
-    for (int i=1; i < quadrants.size(); ++i) {
+    for (int i = 1; i < quadrants.size(); ++i) {
         factor *= quadrants[i];
     }
     return factor;
@@ -229,34 +231,49 @@ unsigned long day_14_1(Puzzle puzzle) {
 
 unsigned long day_14_2(Puzzle puzzle) {
     sf::Image image;
-    image.create(PUZZLE_WIDTH,PUZZLE_HEIGHT );
-    unsigned long factor=0;
-    for (auto i =0; i < 30000; ++i) {
-        std::string file_name="./output_"+std::to_string(i+1)+".png";
+    auto red = sf::Color(0x9E, 0x18, 0x06);
+    auto green = sf::Color(0x30, 0x44, 0x34);
+    auto orange = sf::Color(0xD7, 0x86, 0x28);
+    auto orange_red = sf::Color(0x9F, 0x42, 0x05);
+    image.create(PUZZLE_WIDTH,PUZZLE_HEIGHT);
+    unsigned long factor = 0;
+    for (auto i = 0; i < 30000; ++i) {
+        std::string file_name = "./output_" + std::to_string(i + 1) + ".png";
         puzzle.update(1);
 
-    auto quadrants = puzzle.get_robots_in_quadrants();
-    factor = quadrants[0];
-    for (int i=1; i < quadrants.size(); ++i) {
-        factor *= quadrants[i];
-    }
-        if (factor<50000000)
-        std::cout<<i<<":"<<factor<<"\n";
-        if (factor<50000000) {
-        auto state = puzzle.get_puzzle_state();
-        for (int row = 0; row < PUZZLE_HEIGHT; ++row) {
-            for (int col = 0; col < PUZZLE_WIDTH; ++col) {
-                const auto val = state[row][col];
-                if (val==0) {
+        auto quadrants = puzzle.get_robots_in_quadrants();
+        factor = quadrants[0];
+        for (int i = 1; i < quadrants.size(); ++i) {
+            factor *= quadrants[i];
+        }
+        if (factor < 50000000)
+            std::cout << i << ":" << factor << "\n";
+        if (factor < 50000000) {
+            auto state = puzzle.get_puzzle_state();
+                sf::Color* color = nullptr;
+            for (int row = 0; row < PUZZLE_HEIGHT; ++row) {
+                for (int col = 0; col < PUZZLE_WIDTH; ++col) {
+                    const auto val = state[row][col];
+                    if (val == 0) {
+                        if (row%10==0) {
+                            if (color == &green) {
+                                color = &orange_red;
+                            }else if(color==&orange_red) {
+                               color = &orange;
+                            }else if (color == &orange) {
+                                color = &red;
 
-                image.setPixel(col, row, sf::Color(195,15,22));
-                }else {
-                    image.setPixel(col, row, sf::Color(0xED,0xBB,0xA4));
+                            }else  {
+                               color = &green;
+                            }
+                        }
+                       image.setPixel(col, row, *color);
+                    } else {
+                        image.setPixel(col, row, sf::Color(0xDB, 0xD2, 0xC7));
+                    }
                 }
             }
-        }
             image.saveToFile(file_name);
-
         }
     }
     return factor;
