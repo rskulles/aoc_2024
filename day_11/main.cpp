@@ -81,7 +81,6 @@ std::map<uint64_t, uint64_t> blink(const std::map<uint64_t, uint64_t> &input) {
 }
 
 uint64_t day_11_1(const std::vector<uint64_t> &input);
-
 uint64_t day_11_2(const std::vector<uint64_t> &input);
 
 int main(const int argc, const char *argv[]) {
