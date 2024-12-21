@@ -6,9 +6,8 @@
 
 class Puzzle{};
 
-unsigned long long day_x_1(const Puzzle& puzzle);
-unsigned long long day_x_2(const Puzzle& puzzle);
-Puzzle parse_puzzle(const std::vector<std::string>& puzzle);
+unsigned long day_x_1(const Puzzle& puzzle);
+unsigned long day_x_2(const Puzzle& puzzle);
 
 int main(const int argc, const char *  argv[]) {
     std::ifstream in_file("input.txt");
@@ -17,8 +16,8 @@ int main(const int argc, const char *  argv[]) {
     while (std::getline(in_file, line)) {
        lines.push_back(line);
     }
-    in_file.close();
-    const auto puzzle = parse_puzzle(lines);
+    const Puzzle puzzle;
+    std::cout << "Hello, World!\n";
 
     const auto result_1 = day_x_1(puzzle);
     const auto result_2 = day_x_2(puzzle);
@@ -26,14 +25,10 @@ int main(const int argc, const char *  argv[]) {
     std::cout<<"Result 2: " << result_2 << "\n";
 }
 
-Puzzle parse_puzzle(const std::vector<std::string>& puzzle) {
-  return Puzzle();
-}
-
-unsigned long long day_x_1(const Puzzle& puzzle) {
+unsigned long day_x_1(const Puzzle& puzzle) {
   return 0;
 }
 
-unsigned long long day_x_2(const Puzzle& puzzle) {
+unsigned long day_x_2(const Puzzle& puzzle) {
   return 0;
 }
