@@ -60,9 +60,9 @@ int main(const int argc, const char *  argv[]) {
 
     const auto puzzle = parse_puzzle(lines);
     const auto result_1 = day_22_1(puzzle);
+    std::cout<<"Result 1: " << result_1 << "\n"<<std::flush;
     const auto result_2 = day_22_2(puzzle);
-    std::cout<<"Result 1: " << result_1 << "\n";
-    std::cout<<"Result 2: " << result_2 << "\n";
+    std::cout<<"Result 2: " << result_2 << "\n"<<std::flush;
 }
 
 Puzzle parse_puzzle(const std::vector<std::string>& puzzle) {
@@ -121,19 +121,16 @@ unsigned long long day_22_2(const Puzzle& puzzle) {
         price_map[s][j]=p;
       }else {
         if (price_map[s].find(j)==price_map[s].end()) {
-          price_map[s][j]=p;
+          price_map[s][j]=1;
+          price_map[s].begin()->second+=p;
         }
       }
     }
   }
   uint64_t result =0;
-  for (const auto&kvp: price_map) {
-    uint64_t sum=0;
-    for (const auto& kvp2:kvp.second) {
-      sum+=kvp2.second;
-    }
-    if (sum>result) {
-      result = sum;
+  for (const auto&[fst, snd]: price_map) {
+    if (snd.begin()->second>result) {
+      result = snd.begin()->second;
     }
   }
   return result;
